@@ -8,7 +8,6 @@
   publish = "dist"
 
   # Use our custom build script for Netlify
-[build]
   command = "chmod +x netlify-build.sh && ./netlify-build.sh"
   
 [build.environment]
