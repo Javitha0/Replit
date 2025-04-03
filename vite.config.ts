@@ -3,20 +3,19 @@ import react from "@vitejs/plugin-react";
 import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
     themePlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
+    visualizer({
+      open: true,
+      filename: "bundle-analysis.html",
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   resolve: {
     alias: {
@@ -26,8 +25,30 @@ export default defineConfig({
     },
   },
   root: path.resolve(import.meta.dirname, "client"),
+  base: "/",
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          vendor: [
+            "@radix-ui/react-*",
+            "@tanstack/react-query",
+            "framer-motion",
+            "lucide-react",
+          ],
+          charts: ["recharts"],
+          forms: ["react-hook-form", "@hookform/resolvers"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
+  server: {
+    hmr: {
+      overlay: false,
+    },
   },
 });

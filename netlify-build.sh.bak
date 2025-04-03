@@ -13,10 +13,7 @@ npx vite build
 
 # Apply post-build optimizations
 echo "Applying post-build optimizations..."
-# netlify-build.sh
-echo "Running security headers injection..."
-find dist/public -name '*.html' -exec \
-  sed -i '' 's/<head>/<head>\n<meta http-equiv="Content-Security-Policy" content="default-src '\''self'\''; script-src '\''self'\'' '\''unsafe-inline'\''; style-src '\''self'\'' '\''unsafe-inline'\'';">/g' {} +
+
 # Create _redirects file for SPA routing
 echo "Creating SPA redirects..."
 echo "/* /index.html 200" > dist/public/_redirects
@@ -36,9 +33,5 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <priority>1.0</priority>
   </url>
 </urlset>' > dist/public/sitemap.xml
-# netlify-build.sh
-echo "Running security headers injection..."
-find dist/public -name '*.html' -exec \
-  sed -i '' 's/<head>/<head>\n<meta http-equiv="Content-Security-Policy" content="default-src '\''self'\''; script-src '\''self'\'' '\''unsafe-inline'\''; style-src '\''self'\'' '\''unsafe-inline'\'';">/g' {} +
 
 echo "Build completed successfully!"
